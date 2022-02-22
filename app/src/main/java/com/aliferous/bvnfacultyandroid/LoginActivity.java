@@ -242,7 +242,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //show loading
-                String videopath= "android.resource://com.aliferous.bvnfaculty/"+R.raw.loading;
+                String videopath= "android.resource://com.aliferous.bvnfacultyandroid/"+R.raw.loading;
                 Uri uri = Uri.parse(videopath);
                 loading1.setAudioFocusRequest(AudioManager.AUDIOFOCUS_NONE);
                 loading1.setVideoURI(uri);

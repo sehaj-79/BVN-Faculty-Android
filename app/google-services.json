@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "112586379490",
+    "project_id": "bvn-app-7f808",
+    "storage_bucket": "bvn-app-7f808.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112586379490:android:fd091d64a6a99a4ebdcebb",
+        "android_client_info": {
+          "package_name": "com.aliferous.bvnfacultyandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112586379490-kkf9q9ti3tqjusmop8p6g2idf9roj753.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAde2PvtKvr55_1FlUUrDqnH7VljvGV8ag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "112586379490-kkf9q9ti3tqjusmop8p6g2idf9roj753.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

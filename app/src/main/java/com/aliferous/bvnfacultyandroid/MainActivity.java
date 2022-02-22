@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     String ID,name;
     FirebaseFirestore db;
 
+    ImageView nav_home,nav_calender,nav_todo,nav_profile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
         Splash = findViewById(R.id.splashScreen);
         HomePage = findViewById(R.id.HomePage);
         db= FirebaseFirestore.getInstance();
+
+        nav_home = findViewById(R.id.main_nav_home);
+        nav_calender = findViewById(R.id.main_nav_calender);
+        nav_todo = findViewById(R.id.main_nav_todo);
+        nav_profile = findViewById(R.id.main_nav_profile);
 
         ID= getIntent().getStringExtra("ID");
 
@@ -106,7 +113,40 @@ public class MainActivity extends AppCompatActivity {
         }.start();
 
 
+        //NavBar
 
+        nav_home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                startActivity(intent);*/
+            }
+        });
+
+        nav_calender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,CalenderActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        nav_todo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this ,TodoActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        nav_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
+
 }

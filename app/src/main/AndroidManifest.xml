@@ -16,6 +16,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BVNFaculty">
         <activity
+            android:name=".CalenderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TodoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity

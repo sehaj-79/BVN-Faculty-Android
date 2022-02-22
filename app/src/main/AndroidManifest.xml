@@ -3,10 +3,10 @@
     package="com.aliferous.bvnfacultyandroid">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.READ_SMS"/>
-    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BVNFaculty">
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -23,11 +23,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tv_welcome;
+
+
+    TextView tv_welcome,tv_department;
     ImageView im1,im2,imR;
     ConstraintLayout Splash, HomePage;
     CountDownTimer cdt_splash;
-    String ID,name;
+    String ID,name,department;
     FirebaseFirestore db;
 
     ImageView nav_home,nav_calender,nav_todo,nav_profile;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         im1 = findViewById(R.id.image1);
         im2 = findViewById(R.id.image2);
         tv_welcome = findViewById(R.id.mainWelcome);
+        tv_department = findViewById(R.id.mainDepartment);
         imR = findViewById(R.id.randomImageView);
         Splash = findViewById(R.id.splashScreen);
         HomePage = findViewById(R.id.HomePage);
@@ -69,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     name = document.get("Name").toString().trim();
                     tv_welcome.setText("Welcome "+name);
+                    department = document.get("Department").toString().trim();
+                    tv_department.setText("Department of "+department);
                 }
                 else {}
             }

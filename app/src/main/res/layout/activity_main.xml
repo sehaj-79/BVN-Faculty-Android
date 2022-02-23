@@ -60,10 +60,12 @@
 
         <TextView
             android:id="@+id/mainWelcome"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="30dp"
+            android:paddingEnd="2dp"
             android:fontFamily="@font/robotomedium"
+            android:textStyle="italic"
             android:text="Welcome"
             android:textColor="@color/black"
             android:textSize="25dp"
@@ -72,17 +74,43 @@
 
         <TextView
             android:id="@+id/mainDepartment"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="30dp"
             android:fontFamily="@font/robotomedium"
             android:text="Department of "
             android:textColor="@color/black"
             android:textSize="18dp"
+            android:textStyle="italic"
             app:layout_constraintStart_toStartOf="@+id/mainWelcome"
             app:layout_constraintTop_toBottomOf="@+id/mainWelcome" />
 
+
+        <TextView
+            android:id="@+id/mainNotice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="300dp"
+            android:fontFamily="@font/robotomedium"
+            android:text="Notices"
+            android:textColor="@color/black"
+            android:textSize="25dp"
+            app:layout_constraintStart_toStartOf="@+id/mainDepartment"
+            app:layout_constraintTop_toBottomOf="@+id/mainDepartment" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/main_notices_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/frameLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mainNotice" />
+
         <FrameLayout
+            android:id="@+id/frameLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="40dp"
@@ -94,7 +122,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/nav_bg"/>
+                android:background="@drawable/nav_bg" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

@@ -1,8 +1,13 @@
 package com.aliferous.bvnfacultyandroid;
 
+import static java.security.AccessController.getContext;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -10,6 +15,7 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
@@ -19,7 +25,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import Adapter.NoticeAdapter;
+import Model.Notices;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,12 +50,22 @@ public class MainActivity extends AppCompatActivity {
     String ID,name,department;
     FirebaseFirestore db;
 
+    private NoticeAdapter adapter;
+    RecyclerView notice_recycler;
+    private List<Notices> noticesList;
+
+    private FirebaseFirestore firestore;
+    private Query query;
+    private ListenerRegistration listenerRegistration;
+
     ImageView nav_home,nav_calender,nav_todo,nav_profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        firestore = FirebaseFirestore.getInstance();
 
         im1 = findViewById(R.id.image1);
         im2 = findViewById(R.id.image2);
@@ -117,6 +145,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }.start();
 
+        notice_recycler = findViewById(R.id.main_notices_recycler);
+        notice_recycler.setHasFixedSize(true);
+        notice_recycler.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+        noticesList = new ArrayList<>();
+
+        adapter = new NoticeAdapter(MainActivity.this , noticesList);
+        notice_recycler.setAdapter(adapter);
+        //Read Notices
+        readNotices();
+
 
         //NavBar
 
@@ -149,6 +188,44 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this,ProfileActivity.class);
                 startActivity(intent);
+            }
+        });
+
+    }
+
+    private void readNotices() {
+
+        noticesList.clear();
+        query = firestore.collection("Notices");
+
+        listenerRegistration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                firestore.collection("Notices")
+                        .whereEqualTo("Status", 0)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        if (document.exists()) {
+                                            String id = document.getId();
+                                            Notices NoticeModel = document.toObject(Notices.class).withId(id);
+                                            noticesList.add(NoticeModel);
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                        Log.d("TAG", document.getId() + " => " + document.getData());
+                                    }
+                                } else {
+                                    Log.d("TAG", "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+
+                listenerRegistration.remove();
+
             }
         });
 

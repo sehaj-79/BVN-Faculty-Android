@@ -2,13 +2,23 @@ package com.aliferous.bvnfacultyandroid;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,12 +29,17 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import eightbitlab.com.blurview.BlurView;
+import eightbitlab.com.blurview.RenderScriptBlur;
+
 public class CalendarActivity extends AppCompatActivity implements CalendarAdapter.OnItemListener
 {
     private TextView monthYearText;
     private RecyclerView calendarRecyclerView;
     private LocalDate selectedDate;
     FloatingActionButton fab;
+    ConstraintLayout AddEventPage;
+    BlurView background_blur;
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -35,10 +50,13 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         setContentView(R.layout.activity_calendar);
 
         fab = findViewById(R.id.fab);
+        background_blur = findViewById(R.id.background_blur);
+        AddEventPage = findViewById(R.id.addEvent);
 
         initWidgets();
         selectedDate = LocalDate.now();
         setMonthView();
+        blurBackground();
 
 
         calendarRecyclerView.setOnTouchListener(new OnSwipeTouchListener(CalendarActivity.this){
@@ -60,10 +78,37 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                background_blur.setVisibility(View.VISIBLE);
+                AddEventPage.setVisibility(View.VISIBLE);
+                final ObjectAnimator oa1 = ObjectAnimator.ofFloat(background_blur, "alpha", 0f, 1f);
+                final ObjectAnimator oa2 = ObjectAnimator.ofFloat(AddEventPage, "alpha", 0f, 1f);
+                oa1.setDuration(600);
+                oa2.setDuration(600);
+                oa1.setInterpolator(new AccelerateDecelerateInterpolator());
+                oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+                oa1.start();
+                oa2.start();
             }
         });
 
+    }
+
+    private void blurBackground() {
+
+        float radius = 2f;
+
+        background_blur.clearFocus();
+
+        View decorView = getWindow().getDecorView();
+        ViewGroup rootView = (ViewGroup) decorView.findViewById(android.R.id.content);
+        Drawable windowBackground = decorView.getBackground();
+
+        background_blur.setupWith(rootView)
+                .setFrameClearDrawable(windowBackground)
+                .setBlurAlgorithm(new RenderScriptBlur(this))
+                .setBlurRadius(radius)
+                .setBlurAutoUpdate(true)
+                .setHasFixedTransformationMatrix(true);
     }
 
     private void initWidgets()

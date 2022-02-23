@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
         HomePage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent = new Intent(MainActivity.this,CalendarActivity.class);
-                startActivity(intent);*/
+                Intent intent = new Intent(MainActivity.this,CalendarActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         nav_calender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,CalenderActivity.class);
+                Intent intent = new Intent(MainActivity.this,CalendarActivity.class);
                 startActivity(intent);
             }
         });

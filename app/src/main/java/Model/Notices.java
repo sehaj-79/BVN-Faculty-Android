@@ -5,12 +5,13 @@ import android.icu.text.CaseMap;
 public class Notices extends NoticeId{
 
     private String Title,Desc;
-    private int Status;
+    private int Status, Count;
 
-    public Notices(String Title, String Desc, int Status){
+    public Notices(String Title, String Desc, int Status, int Count){
         this.Title = this.Title;
         this.Desc = this.Desc;
         this.Status = this.Status;
+        this.Count = this.Count;
     }
 
     public Notices(){
@@ -26,5 +27,13 @@ public class Notices extends NoticeId{
 
     public int getStatus() {
         return Status;
+    }
+
+    public int getCount() {
+        return Count;
+    }
+
+    public void setCount(int count) {
+        Count = count;
     }
 }

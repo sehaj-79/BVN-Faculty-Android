@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     CountDownTimer cdt_splash;
     String ID,name,department;
     FirebaseFirestore db;
+    int notice_count=0;
 
     private NoticeAdapter adapter;
     RecyclerView notice_recycler;
@@ -150,9 +151,6 @@ public class MainActivity extends AppCompatActivity {
         notice_recycler.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 
         noticesList = new ArrayList<>();
-
-        adapter = new NoticeAdapter(MainActivity.this , noticesList);
-        notice_recycler.setAdapter(adapter);
         //Read Notices
         readNotices();
 
@@ -212,8 +210,12 @@ public class MainActivity extends AppCompatActivity {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         if (document.exists()) {
                                             String id = document.getId();
+                                            notice_count++;
                                             Notices NoticeModel = document.toObject(Notices.class).withId(id);
+                                            NoticeModel.setCount(notice_count);
                                             noticesList.add(NoticeModel);
+                                            adapter = new NoticeAdapter(MainActivity.this , noticesList);
+                                            notice_recycler.setAdapter(adapter);
                                             adapter.notifyDataSetChanged();
                                         }
                                         Log.d("TAG", document.getId() + " => " + document.getData());

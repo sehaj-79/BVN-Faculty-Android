@@ -66,6 +66,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.MyViewHold
 
             holder.notice_title.setText(notices.getTitle());
             holder.notice_desc.setText(notices.getDesc());
+            holder.notice_number.setText(""+notices.getCount());
         }
 
 

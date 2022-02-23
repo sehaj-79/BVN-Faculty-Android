@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +42,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     FloatingActionButton fab;
     ConstraintLayout AddEventPage;
     BlurView background_blur;
+    Button AddEventBtn;
+    EditText AddEventET;
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -52,6 +56,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         fab = findViewById(R.id.fab);
         background_blur = findViewById(R.id.background_blur);
         AddEventPage = findViewById(R.id.addEvent);
+        AddEventBtn = findViewById(R.id.AddEventButton);
+        AddEventET = findViewById(R.id.AddEventET1);
 
         initWidgets();
         selectedDate = LocalDate.now();
@@ -86,6 +92,30 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                 oa2.setDuration(600);
                 oa1.setInterpolator(new AccelerateDecelerateInterpolator());
                 oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+                oa1.start();
+                oa2.start();
+            }
+        });
+
+        AddEventBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String EventName = AddEventET.getText().toString();
+
+                final ObjectAnimator oa1 = ObjectAnimator.ofFloat(background_blur, "alpha", 1f, 0f);
+                final ObjectAnimator oa2 = ObjectAnimator.ofFloat(AddEventPage, "alpha", 1f, 0f);
+                oa1.setDuration(600);
+                oa2.setDuration(600);
+                oa1.setInterpolator(new AccelerateDecelerateInterpolator());
+                oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+                oa1.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        background_blur.setVisibility(View.GONE);
+                        AddEventPage.setVisibility(View.GONE);
+                    }
+                });
                 oa1.start();
                 oa2.start();
             }
@@ -157,7 +187,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     @RequiresApi(api = Build.VERSION_CODES.O)
     private String monthYearFromDate(LocalDate date)
     {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
         return date.format(formatter);
     }
 
@@ -182,7 +212,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         if(!dayText.equals(""))
         {
             String message = "Selected Date " + dayText + " " + monthYearFromDate(selectedDate);
-            Toast.makeText(this, String.valueOf(position), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         }
     }
 }

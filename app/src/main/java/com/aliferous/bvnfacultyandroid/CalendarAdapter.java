@@ -9,17 +9,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
 {
     private final ArrayList<String> daysOfMonth;
     private final OnItemListener onItemListener;
+    private String message;
 
-    public CalendarAdapter(ArrayList<String> daysOfMonth, OnItemListener onItemListener)
+    public CalendarAdapter(ArrayList<String> daysOfMonth, OnItemListener onItemListener, String message)
     {
         this.daysOfMonth = daysOfMonth;
         this.onItemListener = onItemListener;
+        this.message = message;
     }
 
     @NonNull
@@ -41,6 +44,7 @@ class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
             @Override
             public void onClick(View v) {
                 holder.dayOfMonth.setBackgroundResource(R.drawable.ic_circle);
+                Toast.makeText(v.getContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
 

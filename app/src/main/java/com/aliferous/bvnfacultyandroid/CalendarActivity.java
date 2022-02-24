@@ -157,7 +157,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                 note.put("Audience",Audience);
 
                 //Upload HashMap to Firestore
-                db.collection("Event").document("2022").collection("Feb").document().set(note).addOnSuccessListener(new OnSuccessListener<Void>() {
+                db.collection("Events").document("2022").collection("Feb").document().set(note).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(getApplicationContext(),"Event Addded Successfully",Toast.LENGTH_SHORT).show();

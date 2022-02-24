@@ -1,5 +1,6 @@
 package com.aliferous.bvnfacultyandroid;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -24,12 +25,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
@@ -44,7 +51,9 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     BlurView background_blur;
     Button AddEventBtn;
     String message;
-    EditText AddEventET;
+    EditText AddEventET1,AddEventET2,AddEventET3,AddEventET4,AddEventET5,AddEventET6,AddEventET7;
+    FirebaseFirestore db;
+
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -58,7 +67,15 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         background_blur = findViewById(R.id.background_blur);
         AddEventPage = findViewById(R.id.addEvent);
         AddEventBtn = findViewById(R.id.AddEventButton);
-        AddEventET = findViewById(R.id.AddEventET1);
+        AddEventET1 = findViewById(R.id.AddEventET1);
+        AddEventET2 = findViewById(R.id.AddEventET2);
+        AddEventET3 = findViewById(R.id.AddEventET3);
+        AddEventET4 = findViewById(R.id.AddEventET4);
+        AddEventET5 = findViewById(R.id.AddEventET5);
+        AddEventET6 = findViewById(R.id.AddEventET6);
+        AddEventET7 = findViewById(R.id.AddEventET7);
+        db= FirebaseFirestore.getInstance();
+
 
         initWidgets();
         selectedDate = LocalDate.now();
@@ -101,8 +118,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         AddEventBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String EventName = AddEventET.getText().toString();
 
+                //Animation Page 100% Alpha to 0% Alpha
                 final ObjectAnimator oa1 = ObjectAnimator.ofFloat(background_blur, "alpha", 1f, 0f);
                 final ObjectAnimator oa2 = ObjectAnimator.ofFloat(AddEventPage, "alpha", 1f, 0f);
                 oa1.setDuration(600);
@@ -119,6 +136,40 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                 });
                 oa1.start();
                 oa2.start();
+
+                //Get Strings
+                String EventName = AddEventET1.getText().toString();
+                String Date = AddEventET2.getText().toString();
+                String Time = AddEventET3.getText().toString();
+                String Location = AddEventET4.getText().toString();
+                String Organizer = AddEventET5.getText().toString();
+                String Guest = AddEventET6.getText().toString();
+                String Audience = AddEventET7.getText().toString();
+
+                //Put to HashMap
+                Map<String,Object> note = new HashMap<>();
+                note.put("Event Name",EventName);
+                note.put("Date",Date);
+                note.put("Time",Time);
+                note.put("Location",Location);
+                note.put("Organizer",Organizer);
+                note.put("Guest",Guest);
+                note.put("Audience",Audience);
+
+                //Upload HashMap to Firestore
+                db.collection("Event").document("2022").collection("Feb").document().set(note).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(),"Event Addded Successfully",Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(),"Unable to Add Event",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
             }
         });
 

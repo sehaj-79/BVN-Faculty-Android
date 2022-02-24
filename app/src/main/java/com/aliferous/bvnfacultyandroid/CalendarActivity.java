@@ -43,6 +43,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     ConstraintLayout AddEventPage;
     BlurView background_blur;
     Button AddEventBtn;
+    String message;
     EditText AddEventET;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -123,6 +124,17 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onItemClick(int position, String dayText)
+    {
+        if(!dayText.equals(""))
+        {
+            message = "Selected Date " + dayText + " " + monthYearFromDate(selectedDate);
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void blurBackground() {
 
         float radius = 2f;
@@ -153,7 +165,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         monthYearText.setText(monthYearFromDate(selectedDate));
         ArrayList<String> daysInMonth = daysInMonthArray(selectedDate);
 
-        CalendarAdapter calendarAdapter = new CalendarAdapter(daysInMonth, this);
+        message = "Selected Date " + 1 + " " + monthYearFromDate(selectedDate);
+        CalendarAdapter calendarAdapter = new CalendarAdapter(daysInMonth, this, message);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
@@ -203,17 +216,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     {
         selectedDate = selectedDate.plusMonths(1);
         setMonthView();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
-    public void onItemClick(int position, String dayText)
-    {
-        if(!dayText.equals(""))
-        {
-            String message = "Selected Date " + dayText + " " + monthYearFromDate(selectedDate);
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        }
     }
 }
 

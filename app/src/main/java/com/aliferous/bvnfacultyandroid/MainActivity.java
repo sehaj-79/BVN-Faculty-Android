@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -38,17 +40,19 @@ import java.util.List;
 
 import Adapter.NoticeAdapter;
 import Model.Notices;
+import Model.User;
 
 public class MainActivity extends AppCompatActivity {
 
 
 
-    TextView tv_welcome,tv_department;
+    TextView tv_welcome,tv_department,tv_noticeAdd;
     ImageView im1,im2,imR;
     ConstraintLayout Splash, HomePage;
     CountDownTimer cdt_splash;
     String ID,name,department;
     FirebaseFirestore db;
+    int notice_count=0,MasterAccess;
 
     private NoticeAdapter adapter;
     RecyclerView notice_recycler;
@@ -67,10 +71,12 @@ public class MainActivity extends AppCompatActivity {
 
         firestore = FirebaseFirestore.getInstance();
 
+
         im1 = findViewById(R.id.image1);
         im2 = findViewById(R.id.image2);
         tv_welcome = findViewById(R.id.mainWelcome);
         tv_department = findViewById(R.id.mainDepartment);
+        tv_noticeAdd = findViewById(R.id.mainNoticeAdd);
         imR = findViewById(R.id.randomImageView);
         Splash = findViewById(R.id.splashScreen);
         HomePage = findViewById(R.id.HomePage);
@@ -102,10 +108,16 @@ public class MainActivity extends AppCompatActivity {
                     tv_welcome.setText("Welcome "+name);
                     department = document.get("Department").toString().trim();
                     tv_department.setText("Department of "+department);
+                    MasterAccess = Integer.parseInt(document.get("MasterAccess").toString());
                 }
                 else {}
             }
         });
+
+        if (MasterAccess == 0)
+        {
+            tv_noticeAdd.setVisibility(View.VISIBLE);
+        }
 
         cdt_splash = new CountDownTimer(3000,1000) {
             @Override
@@ -150,9 +162,6 @@ public class MainActivity extends AppCompatActivity {
         notice_recycler.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 
         noticesList = new ArrayList<>();
-
-        adapter = new NoticeAdapter(MainActivity.this , noticesList);
-        notice_recycler.setAdapter(adapter);
         //Read Notices
         readNotices();
 
@@ -212,8 +221,12 @@ public class MainActivity extends AppCompatActivity {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         if (document.exists()) {
                                             String id = document.getId();
+                                            notice_count++;
                                             Notices NoticeModel = document.toObject(Notices.class).withId(id);
+                                            NoticeModel.setCount(notice_count);
                                             noticesList.add(NoticeModel);
+                                            adapter = new NoticeAdapter(MainActivity.this , noticesList, MasterAccess);
+                                            notice_recycler.setAdapter(adapter);
                                             adapter.notifyDataSetChanged();
                                         }
                                         Log.d("TAG", document.getId() + " => " + document.getData());

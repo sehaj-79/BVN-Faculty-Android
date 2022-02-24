@@ -179,7 +179,7 @@
         android:id="@+id/addEvent"
         android:layout_width="300dp"
         android:layout_height="600dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="@drawable/event_layout"
         android:clipToOutline="true"
         app:layout_constraintBottom_toBottomOf="parent"

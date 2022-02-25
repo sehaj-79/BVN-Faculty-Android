@@ -116,7 +116,9 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         eventRecyclerView.setHasFixedSize(true);
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(CalendarActivity.this));
         EventList = new ArrayList<>();
-        //Read Notices
+
+
+        //Read Events
         readEvents();
 
         db= FirebaseFirestore.getInstance();
@@ -216,7 +218,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
 
                 //Put to HashMap
                 Map<String,Object> note = new HashMap<>();
-                note.put("Event Name",EventName);
+                note.put("EventName",EventName);
                 note.put("Date",Date);
                 note.put("Time",Time);
                 note.put("Location",Location);
@@ -247,14 +249,13 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     private void readEvents() {
 
         EventList.clear();
-        query = firestore.collection("Events");
+        query = firestore.collection("Events").document("2022").collection("Feb");
 
         listenerRegistration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
 
-                firestore.collection("Notices")
-                        .whereEqualTo("Status", 0)
+                firestore.collection("Events").document("2022").collection("Feb")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -264,7 +265,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                                         if (document.exists()) {
                                             String id = document.getId();
 
-                                            Events eventModel = document.toObject(Notices.class).withId(id);
+                                            Events eventModel = document.toObject(Events.class).withId(id);
 
                                             EventList.add(eventModel);
                                             adapter = new EventAdapter(CalendarActivity.this , EventList);

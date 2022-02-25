@@ -1,5 +1,7 @@
 package com.aliferous.bvnfacultyandroid;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -26,9 +29,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDate;
@@ -53,6 +60,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     String message;
     EditText AddEventET1,AddEventET2,AddEventET3,AddEventET4,AddEventET5,AddEventET6,AddEventET7;
     FirebaseFirestore db;
+    String ID;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -62,6 +70,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
 
         fab = findViewById(R.id.fab);
         background_blur = findViewById(R.id.background_blur);
@@ -75,6 +84,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         AddEventET6 = findViewById(R.id.AddEventET6);
         AddEventET7 = findViewById(R.id.AddEventET7);
         db= FirebaseFirestore.getInstance();
+        ID= getIntent().getStringExtra("ID");
 
 
         initWidgets();
@@ -82,6 +92,22 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         setMonthView();
         blurBackground();
 
+        DocumentReference docRef = db.collection("cities").document("SF");
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
 
         calendarRecyclerView.setOnTouchListener(new OnSwipeTouchListener(CalendarActivity.this){
             @Override
@@ -142,9 +168,9 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                 String Date = AddEventET2.getText().toString();
                 String Time = AddEventET3.getText().toString();
                 String Location = AddEventET4.getText().toString();
-                String Organizer = AddEventET5.getText().toString();
+                String Audience = AddEventET5.getText().toString();
                 String Guest = AddEventET6.getText().toString();
-                String Audience = AddEventET7.getText().toString();
+                String Organizer = AddEventET7.getText().toString();
 
                 //Put to HashMap
                 Map<String,Object> note = new HashMap<>();
@@ -152,9 +178,10 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                 note.put("Date",Date);
                 note.put("Time",Time);
                 note.put("Location",Location);
-                note.put("Organizer",Organizer);
-                note.put("Guest",Guest);
                 note.put("Audience",Audience);
+                note.put("Guest",Guest);
+                note.put("Organizer",Organizer);
+
 
                 //Upload HashMap to Firestore
                 db.collection("Events").document("2022").collection("Feb").document().set(note).addOnSuccessListener(new OnSuccessListener<Void>() {

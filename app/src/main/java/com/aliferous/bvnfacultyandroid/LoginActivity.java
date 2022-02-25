@@ -67,15 +67,15 @@ public class LoginActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("SharedPrefs",MODE_PRIVATE);
         String enteredID = sharedPreferences.getString("StoredID","");
-        enteredID = "9768";  //FOR TEST PURPOSES, REMOVE WHILE TESTING LOGIN PAGE
+        //enteredID = "9768";  //FOR TEST PURPOSES, REMOVE WHILE TESTING LOGIN PAGE
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        //if (firebaseUser != null){
+        if (firebaseUser != null){
             Intent intent = new Intent(LoginActivity.this,MainActivity.class);
             intent.putExtra("ID",enteredID);
             startActivity(intent);
             finish();
-        //}
+        }
 
 
     }

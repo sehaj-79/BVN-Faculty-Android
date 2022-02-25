@@ -13,6 +13,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,9 +24,11 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
@@ -45,6 +48,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
+
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
@@ -60,7 +65,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     String message;
     EditText AddEventET1,AddEventET2,AddEventET3,AddEventET4,AddEventET5,AddEventET6,AddEventET7;
     FirebaseFirestore db;
-    String ID;
+    String ID,Name;
+    TimePicker timePickerPopup;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -92,20 +98,27 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         setMonthView();
         blurBackground();
 
-        DocumentReference docRef = db.collection("cities").document("SF");
+        DocumentReference docRef = db.collection("IDs").document(""+ID);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        Name = document.getString("Name");
                     } else {
                         Log.d(TAG, "No such document");
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
                 }
+            }
+        });
+
+        AddEventET2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 
@@ -138,6 +151,9 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                 oa2.setInterpolator(new AccelerateDecelerateInterpolator());
                 oa1.start();
                 oa2.start();
+
+                //Set Name Value
+                AddEventET7.setText(Name);
             }
         });
 

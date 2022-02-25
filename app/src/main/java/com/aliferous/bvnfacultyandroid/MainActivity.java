@@ -13,15 +13,22 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,11 +43,15 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Adapter.NoticeAdapter;
 import Model.Notices;
 import Model.User;
+import eightbitlab.com.blurview.BlurView;
+import eightbitlab.com.blurview.RenderScriptBlur;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,8 +59,11 @@ public class MainActivity extends AppCompatActivity {
 
     TextView tv_welcome,tv_department,tv_noticeAdd;
     ImageView im1,im2,imR;
-    ConstraintLayout Splash, HomePage;
+    EditText noticeTitle, noticeDesc;
+    Button addNoticeBtn;
+    ConstraintLayout Splash, HomePage,AddNoticePage;
     CountDownTimer cdt_splash;
+    BlurView background_blur;
     String ID,name,department;
     FirebaseFirestore db;
     int notice_count=0,MasterAccess;
@@ -82,12 +96,20 @@ public class MainActivity extends AppCompatActivity {
         HomePage = findViewById(R.id.HomePage);
         db= FirebaseFirestore.getInstance();
 
+        noticeTitle = findViewById(R.id.AddNoticeTitle);
+        noticeDesc = findViewById(R.id.AddNoticeDesc);
+        addNoticeBtn = findViewById(R.id.AddNoticeButton);
+        AddNoticePage = findViewById(R.id.addNotice);
+        background_blur = findViewById(R.id.main_background_blur);
+
+
         nav_home = findViewById(R.id.main_nav_home);
         nav_calender = findViewById(R.id.main_nav_calender);
         nav_todo = findViewById(R.id.main_nav_todo);
         nav_profile = findViewById(R.id.main_nav_profile);
 
         ID= getIntent().getStringExtra("ID");
+        blurBackground();
 
 
         HomePage.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +140,15 @@ public class MainActivity extends AppCompatActivity {
         {
             tv_noticeAdd.setVisibility(View.VISIBLE);
         }
+
+        tv_noticeAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AddNotice();
+            }
+        });
+
+
 
         cdt_splash = new CountDownTimer(3000,1000) {
             @Override
@@ -203,6 +234,73 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void AddNotice() {
+
+        background_blur.setVisibility(View.VISIBLE);
+        AddNoticePage.setVisibility(View.VISIBLE);
+        final ObjectAnimator oa1 = ObjectAnimator.ofFloat(background_blur, "alpha", 0f, 1f);
+        final ObjectAnimator oa2 = ObjectAnimator.ofFloat(AddNoticePage, "alpha", 0f, 1f);
+        oa1.setDuration(600);
+        oa2.setDuration(600);
+        oa1.setInterpolator(new AccelerateDecelerateInterpolator());
+        oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+        oa1.start();
+        oa2.start();
+
+        addNoticeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //Animation Page 100% Alpha to 0% Alpha
+                final ObjectAnimator oa1 = ObjectAnimator.ofFloat(background_blur, "alpha", 1f, 0f);
+                final ObjectAnimator oa2 = ObjectAnimator.ofFloat(AddNoticePage, "alpha", 1f, 0f);
+                oa1.setDuration(600);
+                oa2.setDuration(600);
+                oa1.setInterpolator(new AccelerateDecelerateInterpolator());
+                oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+                oa1.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        background_blur.setVisibility(View.GONE);
+                        AddNoticePage.setVisibility(View.GONE);
+                    }
+                });
+                oa1.start();
+                oa2.start();
+
+                //Get Strings
+                String NoticeTitle = noticeTitle.getText().toString();
+                String NoticeDesc = noticeDesc.getText().toString();
+                int NoticeStatus = 0;
+
+
+                //Put to HashMap
+                Map<String,Object> notice = new HashMap<>();
+                notice.put("Title",NoticeTitle);
+                notice.put("Desc",NoticeDesc);
+                notice.put("Status",NoticeStatus);
+
+
+                //Upload HashMap to Firestore
+                db.collection("Notices").document().set(notice).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(),"Notice Addded Successfully",Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(),"Unable to Add Notice",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        });
+
+
+    }
+
     private void readNotices() {
 
         noticesList.clear();
@@ -243,6 +341,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void blurBackground() {
+
+        float radius = 2f;
+
+        background_blur.clearFocus();
+
+        View decorView = getWindow().getDecorView();
+        ViewGroup rootView = (ViewGroup) decorView.findViewById(android.R.id.content);
+        Drawable windowBackground = decorView.getBackground();
+
+        background_blur.setupWith(rootView)
+                .setFrameClearDrawable(windowBackground)
+                .setBlurAlgorithm(new RenderScriptBlur(this))
+                .setBlurRadius(radius)
+                .setBlurAutoUpdate(true)
+                .setHasFixedTransformationMatrix(true);
     }
 
 }

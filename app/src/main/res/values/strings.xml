@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">BVN Faculty</string>
+
+    <string-array name="locations">
+        <item>-</item>
+        <item>Foyer</item>
+        <item>Ground</item>
+        <item>Skating Rink</item>
+        <item>Conclave</item>
+    </string-array>
+
 </resources>

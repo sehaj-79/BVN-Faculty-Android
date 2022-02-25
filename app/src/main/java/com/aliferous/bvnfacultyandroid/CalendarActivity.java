@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -66,8 +67,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     EditText AddEventET1,AddEventET2,AddEventET3,AddEventET4,AddEventET5,AddEventET6,AddEventET7;
     FirebaseFirestore db;
     String ID,Name;
-    TimePicker timePickerPopup;
-
+    Spinner LocSpinner;
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -89,6 +89,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         AddEventET5 = findViewById(R.id.AddEventET5);
         AddEventET6 = findViewById(R.id.AddEventET6);
         AddEventET7 = findViewById(R.id.AddEventET7);
+        LocSpinner = findViewById(R.id.locSpinner);
         db= FirebaseFirestore.getInstance();
         ID= getIntent().getStringExtra("ID");
 
@@ -115,12 +116,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
             }
         });
 
-        AddEventET2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
 
         calendarRecyclerView.setOnTouchListener(new OnSwipeTouchListener(CalendarActivity.this){
             @Override
@@ -156,6 +152,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                 AddEventET7.setText(Name);
             }
         });
+
 
         AddEventBtn.setOnClickListener(new View.OnClickListener() {
             @Override

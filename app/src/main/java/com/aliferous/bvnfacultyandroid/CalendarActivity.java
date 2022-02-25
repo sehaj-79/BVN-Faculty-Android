@@ -55,6 +55,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +118,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(CalendarActivity.this));
         EventList = new ArrayList<>();
         //Read Notices
-        readEvents();
+        //readEvents();
 
         db= FirebaseFirestore.getInstance();
         ID= getIntent().getStringExtra("ID");
@@ -127,6 +128,12 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         selectedDate = LocalDate.now();
         setMonthView();
         blurBackground();
+
+        List <String> locations = Arrays.asList("Foyer","Ground","Skating Rink","Conclave","M.P.Hall");
+        ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(),R.layout.spinner_item,locations);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        LocSpinner.setAdapter(adapter);
+
 
         DocumentReference docRef = db.collection("IDs").document(""+ID);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

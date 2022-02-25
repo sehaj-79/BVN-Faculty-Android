@@ -223,7 +223,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
 
                 //Put to HashMap
                 Map<String,Object> note = new HashMap<>();
-                note.put("Event Name",EventName);
+                note.put("EventName",EventName);
                 note.put("Date",Date);
                 note.put("Time",Time);
                 note.put("Location",Location);

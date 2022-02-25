@@ -60,7 +60,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     String message;
     EditText AddEventET1,AddEventET2,AddEventET3,AddEventET4,AddEventET5,AddEventET6,AddEventET7;
     FirebaseFirestore db;
-    String ID;
+    String ID,Name;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -92,14 +92,14 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         setMonthView();
         blurBackground();
 
-        DocumentReference docRef = db.collection("cities").document("SF");
+        DocumentReference docRef = db.collection("IDs").document(""+ID);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        Name = document.getString("Name");
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -138,6 +138,9 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                 oa2.setInterpolator(new AccelerateDecelerateInterpolator());
                 oa1.start();
                 oa2.start();
+
+                //Set Name Value
+                AddEventET7.setText("Mr. "+Name);
             }
         });
 

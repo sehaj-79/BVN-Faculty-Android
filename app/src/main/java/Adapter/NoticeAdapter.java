@@ -78,7 +78,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.MyViewHold
             holder.notice_desc.setText(notices.getDesc());
             holder.notice_number.setText(""+notices.getCount());
 
-            if (MasterAccess == 0)
+            if (MasterAccess == 1)
             {
                 holder.notice_delete.setVisibility(View.VISIBLE);
             }

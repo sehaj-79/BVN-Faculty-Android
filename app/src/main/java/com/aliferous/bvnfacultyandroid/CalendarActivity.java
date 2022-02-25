@@ -3,10 +3,12 @@ package com.aliferous.bvnfacultyandroid;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.animation.Animator;
@@ -41,24 +43,34 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
-
+import Adapter.EventAdapter;
+import Adapter.NoticeAdapter;
+import Model.Events;
+import Model.Notices;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
 public class CalendarActivity extends AppCompatActivity implements CalendarAdapter.OnItemListener
 {
     private TextView monthYearText;
-    private RecyclerView calendarRecyclerView;
+    private RecyclerView calendarRecyclerView,eventRecyclerView;
     private LocalDate selectedDate;
     FloatingActionButton fab;
     ConstraintLayout AddEventPage;
@@ -70,6 +82,13 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     String ID,Name;
     Spinner LocSpinner;
 
+    private EventAdapter adapter;
+    private FirebaseFirestore firestore;
+    private Query query;
+    private ListenerRegistration listenerRegistration;
+
+    private List<Events> EventList;
+
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -78,6 +97,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
+        firestore = FirebaseFirestore.getInstance();
 
         fab = findViewById(R.id.fab);
         background_blur = findViewById(R.id.background_blur);
@@ -91,6 +111,14 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         AddEventET6 = findViewById(R.id.AddEventET6);
         AddEventET7 = findViewById(R.id.AddEventET7);
         LocSpinner = findViewById(R.id.locSpinner);
+
+        eventRecyclerView = findViewById(R.id.EventRecyclerView);
+        eventRecyclerView.setHasFixedSize(true);
+        eventRecyclerView.setLayoutManager(new LinearLayoutManager(CalendarActivity.this));
+        EventList = new ArrayList<>();
+        //Read Notices
+        readEvents();
+
         db= FirebaseFirestore.getInstance();
         ID= getIntent().getStringExtra("ID");
 
@@ -210,6 +238,48 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                     }
                 });
 
+
+            }
+        });
+
+    }
+
+    private void readEvents() {
+
+        EventList.clear();
+        query = firestore.collection("Events");
+
+        listenerRegistration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                firestore.collection("Notices")
+                        .whereEqualTo("Status", 0)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        if (document.exists()) {
+                                            String id = document.getId();
+
+                                            Events eventModel = document.toObject(Notices.class).withId(id);
+
+                                            EventList.add(eventModel);
+                                            adapter = new EventAdapter(CalendarActivity.this , EventList);
+                                            eventRecyclerView.setAdapter(adapter);
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                        Log.d("TAG", document.getId() + " => " + document.getData());
+                                    }
+                                } else {
+                                    Log.d("TAG", "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+
+                listenerRegistration.remove();
 
             }
         });

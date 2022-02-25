@@ -13,6 +13,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,9 +24,11 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
@@ -45,6 +48,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
+
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
@@ -61,6 +66,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     EditText AddEventET1,AddEventET2,AddEventET3,AddEventET4,AddEventET5,AddEventET6,AddEventET7;
     FirebaseFirestore db;
     String ID,Name;
+    TimePicker timePickerPopup;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -109,6 +115,13 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
             }
         });
 
+        AddEventET2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
         calendarRecyclerView.setOnTouchListener(new OnSwipeTouchListener(CalendarActivity.this){
             @Override
             public void onSwipeLeft() {
@@ -140,7 +153,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                 oa2.start();
 
                 //Set Name Value
-                AddEventET7.setText("Mr. "+Name);
+                AddEventET7.setText(Name);
             }
         });
 

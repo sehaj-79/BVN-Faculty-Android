@@ -20,13 +20,13 @@ import Model.Events;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
 
-    private List<Events> noticesList;
+    private List<Events> eventsList;
     private Context activity;
     private FirebaseFirestore firestore;
 
 
-    public EventAdapter(Context mainActivity , List<Events> noticesList){
-        this.noticesList = noticesList;
+    public EventAdapter(Context mainActivity , List<Events> eventsList){
+        this.eventsList = eventsList;
         activity = mainActivity;
     }
 
@@ -40,39 +40,33 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         return new EventAdapter.MyViewHolder(view);
     }
 
-    public void deleteTask(int position){
-        Events notices = noticesList.get(position);
-        //firestore.collection("Events").document(notices.EventId).delete();
-        noticesList.remove(position);
-        notifyItemRemoved(position);
-    }
+
 
     public Context getContext(){
         return activity;
     }
+
+
     public void editTask(int position){
-        Events events = noticesList.get(position);
+        Events events = eventsList.get(position);
 
         Bundle bundle = new Bundle();
-        bundle.putString("Name" , events.getName());
+        bundle.putString("Name" , events.getEventName());
 
     }
     @Override
     public void onBindViewHolder(@NonNull EventAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
-        Events events = noticesList.get(position);
+        Events events = eventsList.get(position);
 
-        holder.event_name.setText(events.getName());
+        holder.event_name.setText(events.getEventName());
 
     }
 
-    private boolean toBoolean(int status){
-        return status != 0;
-    }
 
     @Override
     public int getItemCount() {
-        return noticesList.size();
+        return eventsList.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
@@ -82,7 +76,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            //event_number = itemView.findViewById(R.id.event_number);
+            event_name = itemView.findViewById(R.id.event_name);
 
         }
     }

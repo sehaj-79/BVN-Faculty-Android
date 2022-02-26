@@ -55,7 +55,6 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,8 +116,10 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         eventRecyclerView.setHasFixedSize(true);
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(CalendarActivity.this));
         EventList = new ArrayList<>();
-        //Read Notices
-        //readEvents();
+
+
+        //Read Events
+        readEvents();
 
         db= FirebaseFirestore.getInstance();
         ID= getIntent().getStringExtra("ID");
@@ -128,12 +129,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
         selectedDate = LocalDate.now();
         setMonthView();
         blurBackground();
-
-        List <String> locations = Arrays.asList("Foyer","Ground","Skating Rink","Conclave","M.P.Hall");
-        ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(),R.layout.spinner_item,locations);
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        LocSpinner.setAdapter(adapter);
-
 
         DocumentReference docRef = db.collection("IDs").document(""+ID);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -254,14 +249,13 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     private void readEvents() {
 
         EventList.clear();
-        query = firestore.collection("Events");
+        query = firestore.collection("Events").document("2022").collection("Feb");
 
         listenerRegistration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
 
-                firestore.collection("Notices")
-                        .whereEqualTo("Status", 0)
+                firestore.collection("Events").document("2022").collection("Feb")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -271,7 +265,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
                                         if (document.exists()) {
                                             String id = document.getId();
 
-                                            Events eventModel = document.toObject(Notices.class).withId(id);
+                                            Events eventModel = document.toObject(Events.class).withId(id);
 
                                             EventList.add(eventModel);
                                             adapter = new EventAdapter(CalendarActivity.this , EventList);
